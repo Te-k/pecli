@@ -10,6 +10,23 @@ class PluginInfo(Plugin):
     name = "info"
     description = "Extract info fronm the PE file"
 
+
+    def check_tls(self, pe):
+        callbacks = []
+        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and \
+                    pe.DIRECTORY_ENTRY_TLS and \
+                    pe.DIRECTORY_ENTRY_TLS.struct and \
+                    pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
+            callback_array_rva = pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks - pe.OPTIONAL_HEADER.ImageBase
+            idx = 0
+            while True:
+                func = pe.get_dword_from_data(pe.get_data(callback_array_rva + 4 * idx, 4), 0)
+                if func == 0:
+                    break
+                callbacks.append(func)
+                idx += 1
+            return callbacks
+
     def display_hashes(self, data, pe):
         """Display md5, sha1 and sh256 of the data given"""
         for algo in ["md5", "sha1", "sha256"]:
@@ -26,7 +43,7 @@ class PluginInfo(Plugin):
 
     def display_sections(self, pe):
         """Display information about the PE sections"""
-        print("Name\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress")
+        print("Name\t\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress")
         for section in pe.sections:
             name = section.Name.decode('utf-8').strip('\x00')
             if len(name) < 8:
@@ -49,10 +66,11 @@ class PluginInfo(Plugin):
 
     def display_imports(self, pe):
         """Display imports"""
-        for entry in pe.DIRECTORY_ENTRY_IMPORT:
-            print(entry.dll)
-            for imp in entry.imports:
-                print('\t%s %s' % (hex(imp.address), imp.name))
+        if hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
+            for entry in pe.DIRECTORY_ENTRY_IMPORT:
+                print(entry.dll.decode('utf-8'))
+                for imp in entry.imports:
+                    print('\t%s %s' % (hex(imp.address), imp.name))
 
     def display_exports(self, pe):
         """Display exports"""
@@ -139,6 +157,13 @@ class PluginInfo(Plugin):
         print("")
         self.display_headers(pe)
         print("")
+
+        res = self.check_tls(pe)
+        if len(res) > 0:
+            print("TLS Callback:")
+            for r in res:
+                print("    0x%x" % r)
+
         self.display_debug(pe)
         print("")
         self.display_sections(pe)
