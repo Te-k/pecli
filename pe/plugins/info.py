@@ -28,13 +28,24 @@ class PluginInfo(Plugin):
         """Display information about the PE sections"""
         print("Name\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress")
         for section in pe.sections:
-            print("%s\t%s\t\t%s\t\t%s\t\t%s" % (
-            section.Name,
-                hex(section.Misc_VirtualSize),
-                hex(section.VirtualAddress),
-                hex(section.PointerToRawData),
-                hex(section.SizeOfRawData)
-            ))
+            name = section.Name.decode('utf-8').strip('\x00')
+            if len(name) < 8:
+                print("%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
+                    name,
+                    hex(section.Misc_VirtualSize),
+                    hex(section.VirtualAddress),
+                    hex(section.PointerToRawData),
+                    hex(section.SizeOfRawData)
+                ))
+            else:
+                print("%s\t%s\t\t%s\t\t%s\t\t%s" % (
+                    name,
+                    hex(section.Misc_VirtualSize),
+                    hex(section.VirtualAddress),
+                    hex(section.PointerToRawData),
+                    hex(section.SizeOfRawData)
+                ))
+
 
     def display_imports(self, pe):
         """Display imports"""
