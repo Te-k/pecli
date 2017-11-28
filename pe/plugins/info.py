@@ -10,6 +10,19 @@ class PluginInfo(Plugin):
     name = "info"
     description = "Extract info fronm the PE file"
 
+    def search_section(self, pe, address, physical=True):
+        """Search the section of the given address (return None if not found)"""
+        if physical:
+            for s in pe.sections:
+                if (address >= s.PointerToRawData) and (address <= s.PointerToRawData + s.SizeOfRawData):
+                    #vaddr = pe.OPTIONAL_HEADER.ImageBase + pos - s.PointerToRawData + s.VirtualAddress
+                    return s.Name.decode('utf-8').strip('\x00')
+        else:
+            for s in pe.sections:
+                if (address >= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress)) and (address <= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress + s.Misc_VirtualSize)):
+                    return s.Name.decode('utf-8').strip('\x00')
+
+        return None
 
     def check_tls(self, pe):
         callbacks = []
@@ -158,11 +171,19 @@ class PluginInfo(Plugin):
         self.display_headers(pe)
         print("")
 
+        entry_point = pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase
+        section = self.search_section(pe, entry_point, physical=False)
+        print("Entry point: 0x%x (section %s)" % (pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase, section))
         res = self.check_tls(pe)
         if len(res) > 0:
-            print("TLS Callback:")
-            for r in res:
-                print("    0x%x" % r)
+            if len(res) == 1:
+                section = self.search_section(pe, res[0], physical=False)
+                print("TLS Callback: 0x%x (section %s)" % (res[0], section))
+            else:
+                print("TLS Callback:")
+                for r in res:
+                    section = self.search_section(pe, r, physical=False)
+                    print("    0x%x (section %s)" % (r, section))
 
         self.display_debug(pe)
         print("")
