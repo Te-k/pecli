@@ -38,7 +38,7 @@ class PluginInfo(Plugin):
                     break
                 callbacks.append(func)
                 idx += 1
-            return callbacks
+        return callbacks
 
     def display_hashes(self, data, pe):
         """Display md5, sha1 and sh256 of the data given"""
@@ -56,24 +56,28 @@ class PluginInfo(Plugin):
 
     def display_sections(self, pe):
         """Display information about the PE sections"""
-        print("Name\t\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress")
+        print("Name\t\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress\tMD5")
         for section in pe.sections:
             name = section.Name.decode('utf-8').strip('\x00')
+            m = hashlib.md5()
+            m.update(section.get_data())
             if len(name) < 8:
-                print("%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
+                print("%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
                     name,
                     hex(section.Misc_VirtualSize),
                     hex(section.VirtualAddress),
                     hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData)
+                    hex(section.SizeOfRawData),
+                     m.hexdigest()
                 ))
             else:
-                print("%s\t%s\t\t%s\t\t%s\t\t%s" % (
+                print("%s\t%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
                     name,
                     hex(section.Misc_VirtualSize),
                     hex(section.VirtualAddress),
                     hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData)
+                    hex(section.SizeOfRawData),
+                     m.hexdigest()
                 ))
 
 
