@@ -5,6 +5,7 @@ import hashlib
 import pefile
 import datetime
 from pe.plugins.base import Plugin
+from pe.lib.display import display_sections
 
 class PluginSize(Plugin):
     name = "checksize"
@@ -13,30 +14,6 @@ class PluginSize(Plugin):
     def get_pe_size(self, pe, verbose=True):
         """Return the PE size obtained from the file itself"""
         return max(map(lambda x: x.PointerToRawData + x.SizeOfRawData, pe.sections))
-
-    def display_sections(self, pe):
-        """Display information about the PE sections"""
-        print("Name\t\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress")
-        for section in pe.sections:
-            name = section.Name.decode('utf-8').strip('\x00')
-            if len(name) < 8:
-                print("%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
-                    name,
-                    hex(section.Misc_VirtualSize),
-                    hex(section.VirtualAddress),
-                    hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData)
-                ))
-            else:
-                print("%s\t%s\t\t%s\t\t%s\t\t%s" % (
-                    name,
-                    hex(section.Misc_VirtualSize),
-                    hex(section.VirtualAddress),
-                    hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData)
-                ))
-        print("")
-
 
     def add_arguments(self, parser):
         parser.add_argument('--quiet', '-q', action='store_true', help='Quiet output')
@@ -49,7 +26,7 @@ class PluginSize(Plugin):
             data = f.read()
 
         if not args.quiet:
-            self.display_sections(pe)
+            display_sections(pe)
 
         size = self.get_pe_size(pe)
         if len(data) > size:

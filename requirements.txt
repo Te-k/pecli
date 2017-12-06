@@ -1,1 +1,2 @@
 pefile
+yara-python

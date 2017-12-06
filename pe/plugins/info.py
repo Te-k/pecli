@@ -5,6 +5,7 @@ import hashlib
 import pefile
 import datetime
 from pe.plugins.base import Plugin
+from pe.lib.display import display_sections
 
 class PluginInfo(Plugin):
     name = "info"
@@ -53,33 +54,6 @@ class PluginInfo(Plugin):
         if pe.FILE_HEADER.IMAGE_FILE_DLL:
             print("DLL File! ")
         print("Compile Time: " + str(datetime.datetime.fromtimestamp(pe.FILE_HEADER.TimeDateStamp)))
-
-    def display_sections(self, pe):
-        """Display information about the PE sections"""
-        print("Name\t\tVirtualSize\tVirtualAddress\tRawSize\t\tRawAddress\tMD5")
-        for section in pe.sections:
-            name = section.Name.decode('utf-8').strip('\x00')
-            m = hashlib.md5()
-            m.update(section.get_data())
-            if len(name) < 8:
-                print("%s\t\t%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
-                    name,
-                    hex(section.Misc_VirtualSize),
-                    hex(section.VirtualAddress),
-                    hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData),
-                     m.hexdigest()
-                ))
-            else:
-                print("%s\t%s\t\t%s\t\t%s\t\t%s\t\t%s" % (
-                    name,
-                    hex(section.Misc_VirtualSize),
-                    hex(section.VirtualAddress),
-                    hex(section.PointerToRawData),
-                    hex(section.SizeOfRawData),
-                     m.hexdigest()
-                ))
-
 
     def display_imports(self, pe):
         """Display imports"""
@@ -155,7 +129,7 @@ class PluginInfo(Plugin):
         with open(args.PEFILE, 'rb') as f:
             data = f.read()
         if args.sections:
-            self.display_sections(pe)
+            display_sections(pe)
             sys.exit(0)
         if args.imports:
             self.display_imports(pe)
@@ -191,7 +165,7 @@ class PluginInfo(Plugin):
 
         self.display_debug(pe)
         print("")
-        self.display_sections(pe)
+        display_sections(pe)
         print("")
         self.display_imports(pe)
         print("")
