@@ -92,6 +92,9 @@ class PluginCheck(Plugin):
         ".yP" : "Y0da Protector", ".y0da" : "Y0da Protector"
     }
     normal_sections = [".text", ".rdata", ".data", ".rsrc", ".reloc"]
+    imphashes = {
+        "25c0914e1e7dc7c3bb957d88e787a155": "Enigma VirtualBox"
+    }
 
     def normal_section_name(self, section_name):
         if isinstance(section_name, bytes):
@@ -112,6 +115,12 @@ class PluginCheck(Plugin):
             print("[+] Known malicious sections")
             for r in res:
                 print("\t-%s: %s" % (r, self.know_suspicious_sections[r]))
+
+    def check_imphash(self, pe):
+        """Check imphash in a list of known import hashes"""
+        ih = pe.get_imphash()
+        if ih in self.imphashes:
+            print("[+] Known suspicious import hash: %s" % (self.imphashes[ih]))
 
     def check_pe_size(self, pe, data):
         """Check for extra data in the PE file by comparing PE info and data size"""
@@ -171,3 +180,4 @@ class PluginCheck(Plugin):
         self.check_tls(pe)
         self.check_pe_sections(pe)
         self.check_peid(data)
+        self.check_imphash(pe)
