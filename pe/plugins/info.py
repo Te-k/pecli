@@ -80,7 +80,7 @@ class PluginInfo(Plugin):
         if hasattr(pe, 'DIRECTORY_ENTRY_DEBUG'):
             for i in pe.DIRECTORY_ENTRY_DEBUG:
                 if hasattr(i.entry, 'PdbFileName'):
-                    print("Debug Information: %s" % i.entry.PdbFileName)
+                    print("Debug Information: %s" % i.entry.PdbFileName.decode('utf-8'))
 
     def resource(self, pe, level, r):
         """Recursive printing of resources"""
