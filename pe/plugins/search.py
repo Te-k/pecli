@@ -14,10 +14,7 @@ class PluginSearch(Plugin):
         parser.add_argument('STRING', help='a string')
         self.parser = parser
 
-    def run(self, pe, args):
-        with open(args.PEFILE, 'rb') as f:
-            data = f.read()
-
+    def run(self, args, pe, data):
         pos = data.find(args.STRING.encode('utf-8'))
         if pos == -1:
             print("String not found...")

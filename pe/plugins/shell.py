@@ -15,5 +15,5 @@ class PluginShell(Plugin):
     def add_arguments(self, parser):
         self.parser = parser
 
-    def run(self, pe, args):
+    def run(self, args, pe, data):
         embed()

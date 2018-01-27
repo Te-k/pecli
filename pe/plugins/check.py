@@ -98,35 +98,63 @@ class PluginCheck(Plugin):
 
     def normal_section_name(self, section_name):
         if isinstance(section_name, bytes):
-            n = section_name.decode('utf-8').strip('\x00')
+            n = section_name.decode('utf-8', 'ignore').strip('\x00')
         else:
             n = section_name.strip('\x00')
         return n in self.normal_sections
 
     def check_abnormal_section_name(self, pe):
-        res = [x.Name.decode('utf-8').strip('\x00') for x in pe.sections if not self.normal_section_name(x.Name)]
+        res = [x.Name.decode('utf-8', 'ignore').strip('\x00') for x in pe.sections if not self.normal_section_name(x.Name)]
         if len(res) > 0:
             print("[+] Abnormal section names: %s" % " ".join(res))
+            return True
+        else:
+            return False
 
     def check_known_suspicious_sections(self, pe):
-        names = [x.Name.decode('utf-8').strip('\x00') for x in pe.sections]
+        names = [x.Name.decode('utf-8', 'ignore').strip('\x00') for x in pe.sections]
         res = list(filter(lambda x: x in self.know_suspicious_sections.keys(), names))
         if len(res) > 0:
             print("[+] Known malicious sections")
             for r in res:
                 print("\t-%s: %s" % (r, self.know_suspicious_sections[r]))
+            return True
+        else:
+            return False
+
+    def check_section_entropy(self, pe):
+        res = []
+        for s in pe.sections:
+            if s.get_entropy() < 1  or s.get_entropy() > 7:
+                res.append([s.Name.decode('utf-8', 'ignore').strip('\x00'), s.get_entropy()])
+
+        if len(res) > 0:
+            if len(res) == 1:
+                print("[+] Suspicious section's entropy: %s - %.3f" % ( res[0][0], res[0][1]))
+            else:
+                print("[+] Suspicious entropy in the following sections:")
+                for r in res:
+                    print("\t- %s - %3f" % (r[0], r[1]))
+            return True
+        else:
+            return False
 
     def check_imphash(self, pe):
         """Check imphash in a list of known import hashes"""
         ih = pe.get_imphash()
         if ih in self.imphashes:
             print("[+] Known suspicious import hash: %s" % (self.imphashes[ih]))
+            return True
+        return False
 
     def check_pe_size(self, pe, data):
         """Check for extra data in the PE file by comparing PE info and data size"""
         length = max(map(lambda x: x.PointerToRawData + x.SizeOfRawData, pe.sections))
         if length < len(data):
             print("[+] %i extra bytes in the file" % (len(data) - length))
+            return True
+        else:
+            return False
 
     def check_pe_sections(self, pe):
         """Search for PE headers at the beginning of sections"""
@@ -138,6 +166,8 @@ class PluginCheck(Plugin):
 
         if len(res) > 0:
             print("[+] PE header in sections %s" % " ".join(res))
+            return True
+        return False
 
     def check_tls(self, pe):
         """Check if there is a TLS callback"""
@@ -161,6 +191,8 @@ class PluginCheck(Plugin):
                 print("[+] TLS Callbacks:")
                 for r in callbacks:
                     print("\t- 0x%s" % r)
+            return True
+        return False
 
     def check_peid(self, data):
         """Check on PEid signatures"""
@@ -168,16 +200,27 @@ class PluginCheck(Plugin):
         rules = yara.compile(filepath=peid_db)
         matches = rules.match(data=data)
         if len(matches) > 0:
-            print("[+} PeID packer: %s" % ", ".join(matches))
+            print("[+] PeID packer: %s" % ", ".join([a.rule for a in matches]))
+            return True
+        return False
 
-    def run(self, pe, args):
-        with open(args.PEFILE, 'rb') as f:
-            data = f.read()
+    def check_timestamp(self, pe):
+        date = datetime.datetime.utcfromtimestamp(pe.FILE_HEADER.TimeDateStamp)
+        if (date.year < 2005) or (date > datetime.datetime.now()):
+            print("[+] Suspicious timestamp : %s" % str(date))
+            return True
+        return False
+
+    def run(self, args, pe, data):
         print("Running checks on %s:" % args.PEFILE)
-        self.check_abnormal_section_name(pe)
-        self.check_known_suspicious_sections(pe)
-        self.check_pe_size(pe, data)
-        self.check_tls(pe)
-        self.check_pe_sections(pe)
-        self.check_peid(data)
-        self.check_imphash(pe)
+        suspicious = False
+        suspicious |= self.check_abnormal_section_name(pe)
+        suspicious |= self.check_section_entropy(pe)
+        suspicious |= self.check_known_suspicious_sections(pe)
+        suspicious |= self.check_pe_size(pe, data)
+        suspicious |= self.check_tls(pe)
+        suspicious |= self.check_pe_sections(pe)
+        suspicious |= self.check_peid(data)
+        suspicious |= self.check_imphash(pe)
+        if not suspicious:
+            print("Nothing suspicious found")

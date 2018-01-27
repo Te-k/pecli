@@ -42,7 +42,7 @@ class PluginDump(Plugin):
             else:
                 print("  "*level + "Directory " + str(r.id) + " not explored")
 
-    def run(self, pe, args):
+    def run(self, args, pe, data):
         if args.section:
             for s in pe.sections:
                 if args.section in s.Name.decode('utf-8'):

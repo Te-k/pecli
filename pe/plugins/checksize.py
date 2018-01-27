@@ -21,10 +21,7 @@ class PluginSize(Plugin):
         parser.add_argument('--write', '-w',  help='Copy the file with the right size')
         self.parser = parser
 
-    def run(self, pe, args):
-        with open(args.PEFILE, 'rb') as f:
-            data = f.read()
-
+    def run(self, args, pe, data):
         if not args.quiet:
             display_sections(pe)
 

@@ -34,8 +34,13 @@ def main():
 
     args = parser.parse_args()
     if hasattr(args, 'plugin'):
-        pe = pefile.PE(args.PEFILE)
-        plugins[args.plugin].run(pe, args)
+        try:
+            with open(args.PEFILE, 'rb') as f:
+                data = f.read()
+            pe = pefile.PE(data=data)
+            plugins[args.plugin].run(args, pe, data)
+        except pefile.PEFormatError:
+            print("Invalid PE file")
     else:
         parser.print_help()
 
