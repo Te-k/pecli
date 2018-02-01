@@ -71,7 +71,7 @@ class PluginInfo(Plugin):
             for exp in pe.DIRECTORY_ENTRY_EXPORT.symbols:
                 print("%s %s %s" % (
                     hex(pe.OPTIONAL_HEADER.ImageBase + exp.address),
-                    exp.name,
+                    exp.name.decode('utf-8', 'ignore'),
                     exp.ordinal
                 ))
         except AttributeError:
