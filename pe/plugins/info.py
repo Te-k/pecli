@@ -63,7 +63,11 @@ class PluginInfo(Plugin):
             for entry in pe.DIRECTORY_ENTRY_IMPORT:
                 print(entry.dll.decode('utf-8'))
                 for imp in entry.imports:
-                    print('\t%s %s' % (hex(imp.address), imp.name.decode('utf-8')))
+                    if imp.name:
+                        print('\t%s %s' % (hex(imp.address), imp.name.decode('utf-8')))
+                    else:
+                        print('\t%s %s' % (hex(imp.address), str(imp.ordinal)))
+
 
     def display_exports(self, pe):
         """Display exports"""
