@@ -8,7 +8,7 @@ from pe.plugins.base import Plugin
 
 class PluginSearch(Plugin):
     name = "search"
-    description = "Search string in a PE file"
+    description = "Search a string in a PE file"
 
     def add_arguments(self, parser):
         parser.add_argument('STRING', help='a string')
@@ -27,4 +27,4 @@ class PluginSearch(Plugin):
         for s in pe.sections:
             if (pos >= s.PointerToRawData) and (pos <= s.PointerToRawData + s.SizeOfRawData):
                 vaddr = pe.OPTIONAL_HEADER.ImageBase + pos - s.PointerToRawData + s.VirtualAddress
-                print("In section %s at address 0x%x" % (s.Name, vaddr))
+                print("In section %s at address 0x%x" % (s.Name.decode('utf-8', 'ignore'), vaddr))

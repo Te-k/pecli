@@ -1,3 +1,4 @@
 pefile
 yara-python
 python-magic
+ipython

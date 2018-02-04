@@ -11,7 +11,7 @@ from pe.lib.display import display_sections
 
 class PluginInfo(Plugin):
     name = "info"
-    description = "Extract info fronm the PE file"
+    description = "Extract info from the PE file"
 
     def search_section(self, pe, address, physical=True):
         """Search the section of the given address (return None if not found)"""

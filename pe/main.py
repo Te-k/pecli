@@ -41,6 +41,8 @@ def main():
             plugins[args.plugin].run(args, pe, data)
         except pefile.PEFormatError:
             print("Invalid PE file")
+        except FileNotFoundError:
+            print("File not found")
     else:
         parser.print_help()
 

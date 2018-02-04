@@ -8,7 +8,7 @@ from pe.plugins.base import Plugin
 
 class PluginCheck(Plugin):
     name = "check"
-    description = "Check for weirdness in PE formate"
+    description = "Check for stuff in the file"
     # Known suspicious sections partially imported from
     # https://github.com/katjahahn/PortEx/blob/master/src/main/java/com/github/katjahahn/tools/anomalies/SectionTableScanning.scala
     know_suspicious_sections = {
