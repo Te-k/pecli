@@ -22,7 +22,7 @@ PE works with plugin, like `pe PLUGIN FILE`
 Current plugins includes :
 * **info** : Extract info from the PE file
 * **dump** : Dump resource or section of the file
-* **search** : Search string in a PE file
+* **search** : Search for a string in a PE file
 * **checksize** : Check size of the PE file
 * **check** :  Check for weird stuff in the PE file
 * **shell** : Launch ipython shell to analyze the PE file

@@ -1,14 +1,11 @@
 #! /usr/bin/env python
 import sys
-import json
-import hashlib
 import pefile
-import datetime
 from pe.plugins.base import Plugin
 
 class PluginSearch(Plugin):
     name = "search"
-    description = "Search a string in a PE file"
+    description = "Search for a string in a PE file"
 
     def add_arguments(self, parser):
         parser.add_argument('STRING', help='a string')
