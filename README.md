@@ -89,4 +89,5 @@ This tool is published under GPLv3 License
 ## Similar tools
 
 * [PEScanner](https://github.com/Te-k/analyst-scripts/blob/master/pe/pescanner.py) published by Michael Ligh for the [Malware Analyst's Cookbook](https://www.wiley.com/en-us/Malware+Analyst%27s+Cookbook+and+DVD%3A+Tools+and+Techniques+for+Fighting+Malicious+Code-p-9780470613030) (python2 only)
+* [Manalyze](https://github.com/JusticeRage/Manalyze)
 * On Windows, [PeStudio](https://www.winitor.com/), [PEView](http://wjradburn.com/software/) and [Resource Hacker](http://www.angusj.com/resourcehacker/)
