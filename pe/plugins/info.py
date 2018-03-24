@@ -110,7 +110,10 @@ class PluginInfo(Plugin):
         else:
             # directory
             parents = copy.copy(parents)
-            parents.append(str(r.id))
+            if r.id:
+                parents.append(str(r.id))
+            else:
+                parents.append(r.name.string.decode('utf-8'))
             for r2 in r.directory.entries:
                 self.resource(pe, level+1, r2, parents)
 
