@@ -84,7 +84,7 @@ Running checks on playlib.exe:
 
 ## License
 
-This tool is published under GPLv3 License
+This tool is published under MIT License
 
 ## Similar tools
 
