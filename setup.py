@@ -10,7 +10,7 @@ setup(
     keywords='malware',
     include_package_data=True,
     install_requires=['pefile', 'yara-python', 'python-magic', 'ipython'],
-    license='GPLv3',
+    license='MIT',
     python_requires='>=3.5',
     packages=['pe', 'pe.plugins', 'pe.lib', 'pe.data'],
     package_dir={'pe.lib': 'pe/lib'},
