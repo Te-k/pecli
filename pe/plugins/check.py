@@ -11,6 +11,7 @@ class PluginCheck(Plugin):
     description = "Check for stuff in the file"
     # Known suspicious sections partially imported from
     # https://github.com/katjahahn/PortEx/blob/master/src/main/java/com/github/katjahahn/tools/anomalies/SectionTableScanning.scala
+    # http://www.hexacorn.com/blog/2016/12/15/pe-section-names-re-visited/
     know_suspicious_sections = {
 	".arch":  "Alpha-architecture section",
 	".bindat": "Binary data, e.g., by downware installers",
@@ -38,19 +39,26 @@ class PluginCheck(Plugin):
 	"ASPack" : "Aspack packer",
         ".ASPack" : "Aspack packer",
 	".asspck" : "Aspack packer",
+        ".boom": "The Boomerang List Builder",
 	".ccg" : "CCG Packer (Chinese)",
 	"BitArts" : "Crunch 2.0 Packer",
 	"DAStub" : "DAStub Dragon Armor protector",
 	".charmve" : "Added by the PIN tool",
+        ".ecode": "Developed with  Easy Programming Language (EPL)",
+        ".edata": "Developed with  Easy Programming Language (EPL)",
 	".enigma1" : "Enigma Virtual Box protector",
 	".enigma2" : "Enigma Virtual Box protector",
 	"!EPack" : "EPack packer",
+        ".gentee": "Gentee installer",
+        ".kkrunchy": "kkrunchy Packer",
+        "lz32.dll": "Crinkler",
 	".mackt" : "ImpRec-created section, this file was patched/cracked",
 	".MaskPE" : "MaskPE Packer",
 	"MEW" : "MEW packer",
 	".MPRESS1" : "MPRESS Packer",
 	".MPRESS2" : "MPRESS Packer",
-        ".neolite" : "Neolite Packer", ".neolit" : "Neolite Packer",
+        ".neolite" : "Neolite Packer",
+        ".neolit" : "Neolite Packer",
         ".ndata" : "Nullsoft Installer",
         ".nsp0" : "NsPack packer",
         ".nsp1" : "NsPack packer",
@@ -61,9 +69,12 @@ class PluginCheck(Plugin):
         ".packed" : "RLPack Packer", #  first section only
         "pebundle" : "PEBundle Packer",
         "PEBundle" : "PEBundle Packer",
-        "PEC2TO" : "PECompact packer","PEC2" : "PECompact packer",
-        "pec1" : "PECompact packer","pec2" : "PECompact packer",
-        "PEC2MO" : "PECompact packer", "PEC2TO" : "PECompact packer",
+        "PEC2TO" : "PECompact packer",
+        "PEC2" : "PECompact packer",
+        "pec1" : "PECompact packer",
+        "pec2" : "PECompact packer",
+        "PEC2MO" : "PECompact packer",
+        "PEC2TO" : "PECompact packer",
         "PECompact2" : "PECompact packer",
         "PELOCKnt" : "PELock Protector",
         ".perplex" : "Perplex PE-Protector",
@@ -73,12 +84,16 @@ class PluginCheck(Plugin):
         "ProCrypt" : "ProCrypt Packer",
         ".RLPack" : "RLPack Packer", # second section
         ".rmnet" : "Ramnit virus marker",
-        "RCryptor" : "RPCrypt Packer", ".RPCrypt" : "RPCrypt Packer",
+        "RCryptor" : "RPCrypt Packer",
+        ".RPCrypt" : "RPCrypt Packer",
+        ".seau": "SeauSFX Packer",
         ".sforce3" : "StarForce Protection",
         ".spack" : "Simple Pack (by bagie)",
         ".svkp" : "SVKP packer",
-        ".Themida" : "Themida","Themida" : "Themida",
-        ".tsuarch" : "TSULoader", ".tsustub" : "TSULoader",
+        ".Themida" : "Themida",
+        "Themida" : "Themida",
+        ".tsuarch" : "TSULoader",
+        ".tsustub" : "TSULoader",
         "PEPACK!!" : "Pepack",
         ".Upack" : "Upack packer",
         ".ByDwing" : "Upack packer",
@@ -89,7 +104,8 @@ class PluginCheck(Plugin):
         "VProtect" : "Vprotect Packer",
         "WinLicen" : "WinLicense (Themida) Protector",
         ".WWPACK" : "WWPACK Packer",
-        ".yP" : "Y0da Protector", ".y0da" : "Y0da Protector"
+        ".yP" : "Y0da Protector",
+        ".y0da" : "Y0da Protector",
     }
     normal_sections = [".text", ".rdata", ".data", ".rsrc", ".reloc"]
     imphashes = {
