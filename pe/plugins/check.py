@@ -3,6 +3,7 @@ import pefile
 import datetime
 import yara
 import os
+import copy
 from pe.plugins.base import Plugin
 
 
@@ -227,6 +228,44 @@ class PluginCheck(Plugin):
             return True
         return False
 
+    def resource(self, pe, r, parents):
+        """Recursive printing of resources"""
+        if hasattr(r, "data"):
+            # Resource
+            offset = r.data.struct.OffsetToData
+            size = r.data.struct.Size
+            data = pe.get_memory_mapped_image()[offset:offset+size]
+            if data.startswith(b'\x4d\x5a\x90\x00\x03\x00\x00\x00'):
+                if r.name:
+                    name = '/'.join(parents) + '/' + str(r.name)
+                else:
+                    name = '/'.join(parents) + '/' + str(r.id)
+                print('[+] PE header in resource {}'.format(name))
+                return True
+            else:
+                return False
+        else:
+            # directory
+            parents = copy.copy(parents)
+            if r.id:
+                parents.append(str(r.id))
+            else:
+                parents.append(r.name.string.decode('utf-8'))
+            suspicious = False
+            for r2 in r.directory.entries:
+                suspicious |= self.resource(pe, r2, parents)
+            return suspicious
+
+    def check_pe_resource(self, pe):
+        """
+        Check if any resource starts with a PE header
+        """
+        suspicious = False
+        if hasattr(pe, 'DIRECTORY_ENTRY_RESOURCE'):
+            for r in pe.DIRECTORY_ENTRY_RESOURCE.entries:
+                suspicious |= self.resource(pe, r, [])
+        return suspicious
+
     def run(self, args, pe, data):
         print("Running checks on %s:" % args.PEFILE)
         suspicious = False
@@ -238,5 +277,6 @@ class PluginCheck(Plugin):
         suspicious |= self.check_pe_sections(pe)
         suspicious |= self.check_peid(data)
         suspicious |= self.check_imphash(pe)
+        suspicious |= self.check_pe_resource(pe)
         if not suspicious:
             print("Nothing suspicious found")
