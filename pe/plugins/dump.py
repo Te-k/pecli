@@ -58,12 +58,12 @@ class PluginDump(Plugin):
         elif args.resource:
             level = 0
             search = args.resource.split("/")
+            found = False
             if hasattr(pe, 'DIRECTORY_ENTRY_RESOURCE'):
                 for r in pe.DIRECTORY_ENTRY_RESOURCE.entries:
                     data = self.resource(pe, 0, r, search, args.debug)
-                    if data is None:
-                        print("Resource not found")
-                    else:
+                    if data is not None:
+                        found = True
                         if args.output is None:
                             output = args.resource.replace("/", "_")
                         else:
@@ -71,9 +71,8 @@ class PluginDump(Plugin):
                         with open(output, 'wb+') as f:
                             f.write(data)
                         print("data found, size %i" % len(data))
-                        print("Section written in %s" % (output))
-
-            else:
-                print("No resources in this file")
+                        print("Resource written in %s" % (output))
+            if not found:
+                print("This resource was not found")
         else:
             self.parser.print_help()
