@@ -5,6 +5,7 @@ import hashlib
 import pefile
 import datetime
 from pe.plugins.base import Plugin
+from pe.lib.dotnet_guid import is_dot_net_assembly, get_guid
 from IPython import embed
 
 

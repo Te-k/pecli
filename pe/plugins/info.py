@@ -8,6 +8,8 @@ import magic
 import copy
 from pe.plugins.base import Plugin
 from pe.lib.display import display_sections
+from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
+
 
 class PluginInfo(Plugin):
     name = "info"
@@ -48,14 +50,14 @@ class PluginInfo(Plugin):
         for algo in ["md5", "sha1", "sha256"]:
             m = getattr(hashlib, algo)()
             m.update(data)
-            print("%-14s %s" % (algo.upper()+":", m.hexdigest()))
-        print("%-14s %s" % ("Imphash:", pe.get_imphash()))
+            print("%-15s %s" % (algo.upper()+":", m.hexdigest()))
+        print("%-15s %s" % ("Imphash:", pe.get_imphash()))
 
     def display_headers(seld, pe):
         """Display header information"""
         if pe.FILE_HEADER.IMAGE_FILE_DLL:
             print("DLL File! ")
-        print("Compile Time:  %s (UTC - 0x%-8X)"  %(str(datetime.datetime.utcfromtimestamp(pe.FILE_HEADER.TimeDateStamp)), pe.FILE_HEADER.TimeDateStamp))
+        print("Compile Time:\t%s (UTC - 0x%-8X)"  %(str(datetime.datetime.utcfromtimestamp(pe.FILE_HEADER.TimeDateStamp)), pe.FILE_HEADER.TimeDateStamp))
 
     def display_imports(self, pe):
         """Display imports"""
@@ -86,7 +88,7 @@ class PluginInfo(Plugin):
         if hasattr(pe, 'DIRECTORY_ENTRY_DEBUG'):
             for i in pe.DIRECTORY_ENTRY_DEBUG:
                 if hasattr(i.entry, 'PdbFileName'):
-                    print("Debug Information: %s" % i.entry.PdbFileName.decode('utf-8', 'ignore'))
+                    print("Debug Info:\t%s" % i.entry.PdbFileName.decode('utf-8', 'ignore'))
 
     def resource(self, pe, level, r, parents):
         """Recursive printing of resources"""
@@ -155,22 +157,29 @@ class PluginInfo(Plugin):
         print("Metadata")
         print("=" * 80)
         self.display_hashes(data, pe)
-        print("Size:          %d bytes" % len(data))
-        print("Type:          %s" % magic.from_buffer(data))
+        print("Size:\t\t%d bytes" % len(data))
+        print("Type:\t\t%s" % magic.from_buffer(data))
         self.display_headers(pe)
         entry_point = pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase
         section = self.search_section(pe, entry_point, physical=False)
-        print("Entry point:   0x%x (section %s)" % (pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase, section))
+        print("Entry point:\t0x%x (section %s)" % (pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase, section))
         res = self.check_tls(pe)
         if len(res) > 0:
             if len(res) == 1:
                 section = self.search_section(pe, res[0], physical=False)
-                print("TLS Callback: 0x%x (section %s)" % (res[0], section))
+                print("TLS Callback:\t0x%x (section %s)" % (res[0], section))
             else:
                 print("TLS Callback:")
                 for r in res:
                     section = self.search_section(pe, r, physical=False)
-                    print("    0x%x (section %s)" % (r, section))
+                    print("\t\t0x%x (section %s)" % (r, section))
+        if is_dot_net_assembly(pe):
+            try:
+                res = get_guid(pe, data)
+                print(".NET MVid:\t{}".format(res["mvid"]))
+                print(".NET GUID:\t{}".format(res['typelib_id']))
+            except:
+                print("Impossible to parse .NET GUID")
 
         self.display_debug(pe)
         print("")
