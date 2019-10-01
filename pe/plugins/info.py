@@ -112,7 +112,7 @@ class PluginInfo(Plugin):
         else:
             # directory
             parents = copy.copy(parents)
-            if r.id:
+            if r.id is not None:
                 parents.append(str(r.id))
             else:
                 parents.append(r.name.string.decode('utf-8'))
