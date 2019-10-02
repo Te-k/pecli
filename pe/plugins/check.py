@@ -112,6 +112,10 @@ class PluginCheck(Plugin):
     imphashes = {
         "25c0914e1e7dc7c3bb957d88e787a155": "Enigma VirtualBox"
     }
+    resource_names = {
+        "PYTHONSCRIPT": "PY2EXE binary",
+        "PYTHON27.DLL": "PY2EXE binary"
+    }
 
     def normal_section_name(self, section_name):
         if isinstance(section_name, bytes):
@@ -247,11 +251,18 @@ class PluginCheck(Plugin):
         else:
             # directory
             parents = copy.copy(parents)
-            if r.id:
+            suspicious = False
+            if r.id is not None:
                 parents.append(str(r.id))
             else:
-                parents.append(r.name.string.decode('utf-8'))
-            suspicious = False
+                name = r.name.string.decode('utf-8')
+                parents.append(name)
+                if name in self.resource_names:
+                    print("[+] Suspicious resource name: {} -> {}".format(
+                        name,
+                        self.resource_names[name])
+                    )
+                    suspicious = True
             for r2 in r.directory.entries:
                 suspicious |= self.resource(pe, r2, parents)
             return suspicious
