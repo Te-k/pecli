@@ -176,8 +176,8 @@ class PluginInfo(Plugin):
         if is_dot_net_assembly(pe):
             try:
                 res = get_guid(pe, data)
-                print(".NET MVid:\t{}".format(res["mvid"]))
-                print(".NET GUID:\t{}".format(res['typelib_id']))
+                print(".NET MVid\t{}".format(res["mvid"]))
+                print(".NET TypeLib\t{}".format(res['typelib_id']))
             except:
                 print("Impossible to parse .NET GUID")
 

@@ -29,20 +29,24 @@ def main():
             help=plugins[p].description
         )
         plugins[p].add_arguments(sp)
-        sp.add_argument('PEFILE', help='a PE file')
+        if plugins[p].on_pe:
+            sp.add_argument('PEFILE', help='a PE file')
         sp.set_defaults(plugin=p)
 
     args = parser.parse_args()
     if hasattr(args, 'plugin'):
-        try:
-            with open(args.PEFILE, 'rb') as f:
-                data = f.read()
-            pe = pefile.PE(data=data)
-            plugins[args.plugin].run(args, pe, data)
-        except pefile.PEFormatError:
-            print("Invalid PE file")
-        except FileNotFoundError:
-            print("File not found")
+        if plugins[args.plugin].on_pe:
+            try:
+                with open(args.PEFILE, 'rb') as f:
+                    data = f.read()
+                pe = pefile.PE(data=data)
+                plugins[args.plugin].run(args, pe, data)
+            except pefile.PEFormatError:
+                print("Invalid PE file")
+            except FileNotFoundError:
+                print("File not found")
+        else:
+            plugins[args.plugin].run(args)
     else:
         parser.print_help()
 
