@@ -9,6 +9,7 @@ import copy
 from pe.plugins.base import Plugin
 from pe.lib.display import display_sections
 from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
+from pe.lib.utils import debug_filename, debug_guid
 
 
 class PluginInfo(Plugin):
@@ -85,10 +86,12 @@ class PluginInfo(Plugin):
 
     def display_debug(self, pe):
         """Display debug infos"""
-        if hasattr(pe, 'DIRECTORY_ENTRY_DEBUG'):
-            for i in pe.DIRECTORY_ENTRY_DEBUG:
-                if hasattr(i.entry, 'PdbFileName'):
-                    print("Debug Info:\t%s" % i.entry.PdbFileName.decode('utf-8', 'ignore'))
+        debug_fn = debug_filename(pe)
+        debug_g = debug_guid(pe)
+        if debug_fn:
+            print("Debug Filename:\t{}".format(debug_fn))
+        if debug_g:
+            print("Debug GUID:\t{}".format(debug_g))
 
     def resource(self, pe, level, r, parents):
         """Recursive printing of resources"""

@@ -8,6 +8,7 @@ import json
 import ssdeep
 from pe.plugins.base import Plugin
 from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
+from pe.lib.utils import debug_filename, debug_guid
 from virus_total_apis import PublicApi, PrivateApi
 
 
@@ -120,6 +121,8 @@ class PluginVirusTotal(Plugin):
                         ssd = ssdeep.hash(data)
                         vhash = None
                         authentihash = None
+                        dbg_filename = debug_filename(pe)
+                        dbg_guid = debug_guid(pe)
                         if is_dot_net_assembly(pe):
                             res = get_guid(pe, data)
                             dotnet_mvid = res["mvid"]
@@ -133,6 +136,15 @@ class PluginVirusTotal(Plugin):
                         ssd = response['results']['ssdeep']
                         authentihash = response['results']['authentihash']
                         imphash = response['results']['additional_info']["pe-imphash"]
+                        dbg_guid = None
+                        dbg_filename = None
+                        if "pe-debug" in response['results']['additional_info']:
+                            if "codeview" in response['results']['additional_info']["pe-debug"][0]:
+                                if "guid" in response['results']['additional_info']["pe-debug"][0]["codeview"]:
+                                    dbg_guid = response['results']['additional_info']["pe-debug"][0]["codeview"]["guid"]
+                                if "name" in response['results']['additional_info']["pe-debug"][0]["codeview"]:
+                                    dbg_filename = response['results']['additional_info']['pe-debug'][0]['codeview']['name']
+
                         if "netguids" in response['results']['additional_info']:
                             dotnet_mvid = response['results']['additional_info']['netguids']['mvid']
                             dotnet_typelib = response['results']['additional_info']['netguids']['typelib_id']
@@ -166,6 +178,15 @@ class PluginVirusTotal(Plugin):
                     if dotnet_typelib:
                         print("# Searching for .NET TypeLib id: {}".format(dotnet_typelib))
                         res = vt.file_search('netguid:"{}"'.format(dotnet_typelib))
+                        self.print_results(res, sha256)
+                    # Debug
+                    if dbg_filename:
+                        print("# Searching for Debug Filename: {}".format(dbg_filename))
+                        res = vt.file_search('"{}"'.format(dbg_filename))
+                        self.print_results(res, sha256)
+                    if dbg_guid:
+                        print("# Searching for Debug GUID: {}".format(dbg_guid))
+                        res = vt.file_search('"{}"'.format(dbg_guid))
                         self.print_results(res, sha256)
             elif args.subcommand == 'config':
                 config = configparser.ConfigParser()
