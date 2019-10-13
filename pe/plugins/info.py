@@ -10,6 +10,7 @@ from pe.plugins.base import Plugin
 from pe.lib.display import display_sections
 from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
 from pe.lib.utils import debug_filename, debug_guid
+from pe.lib.richpe import get_richpe_hash
 
 
 class PluginInfo(Plugin):
@@ -185,6 +186,9 @@ class PluginInfo(Plugin):
                 print("Impossible to parse .NET GUID")
 
         self.display_debug(pe)
+        richpe = get_richpe_hash(pe)
+        if richpe:
+            print("RichPE Hash\t{}".format(richpe))
         print("")
         print("Sections")
         print("=" * 80)
