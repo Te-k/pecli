@@ -17,6 +17,13 @@ class PluginInfo(Plugin):
     name = "info"
     description = "Extract info from the PE file"
 
+    def is_signed(self, pe):
+        """
+        Check if the PE is signed
+        Return True / False
+        """
+        return (pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress != 0)
+
     def search_section(self, pe, address, physical=True):
         """Search the section of the given address (return None if not found)"""
         if physical:
@@ -158,6 +165,7 @@ class PluginInfo(Plugin):
             print(pe.dump_info())
             sys.exit(0)
 
+        # Metadata
         print("Metadata")
         print("=" * 80)
         self.display_hashes(data, pe)
@@ -189,6 +197,10 @@ class PluginInfo(Plugin):
         richpe = get_richpe_hash(pe)
         if richpe:
             print("RichPE Hash\t{}".format(richpe))
+        if self.is_signed(pe):
+            print("Signed PE file")
+
+        # Sections
         print("")
         print("Sections")
         print("=" * 80)
