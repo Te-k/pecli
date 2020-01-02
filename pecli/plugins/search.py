@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import sys
 import pefile
-from pe.plugins.base import Plugin
+from pecli.plugins.base import Plugin
 
 class PluginSearch(Plugin):
     name = "search"

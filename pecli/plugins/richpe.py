@@ -3,8 +3,8 @@ import sys
 import json
 import hashlib
 import pefile
-from pe.plugins.base import Plugin
-from pe.lib.richpe import get_richpe_hash, get_richpe_info
+from pecli.plugins.base import Plugin
+from pecli.lib.richpe import get_richpe_hash, get_richpe_info
 
 
 class PluginRichPE(Plugin):

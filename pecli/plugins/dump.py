@@ -4,7 +4,7 @@ import json
 import hashlib
 import pefile
 import datetime
-from pe.plugins.base import Plugin
+from pecli.plugins.base import Plugin
 
 
 class PluginDump(Plugin):

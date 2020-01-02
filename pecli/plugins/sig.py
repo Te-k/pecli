@@ -4,7 +4,7 @@ import datetime
 import yara
 import os
 import copy
-from pe.plugins.base import Plugin
+from pecli.plugins.base import Plugin
 
 
 class PluginSig(Plugin):

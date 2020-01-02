@@ -1,4 +1,4 @@
-# PE
+# PEcli
 
 Tool to analyze PE files in python 3. Current features :
 * Show information about the file (import, exports, resources)
@@ -9,27 +9,39 @@ Tool to analyze PE files in python 3. Current features :
 
 ## Installation
 
+You can install it from [pypi](https://pypi.org/project/pecli/) : `pip install pecli`
+
+Or directly from the code :
 ```
-git clone git@github.com:Te-k/pe.git
-cd pe
+git clone https://github.com/Te-k/pecli.git
+cd pecli
 pip install .
 ```
 
 ## How to
 
-PE works with plugin, like `pe PLUGIN FILE`
+PEcli works with plugins, like `pecli PLUGIN FILE`
 
-Current plugins includes :
-* **info** : Extract info from the PE file
-* **dump** : Dump resource or section of the file
-* **search** : Search for a string in a PE file
-* **checksize** : Check size of the PE file
-* **check** :  Check for weird stuff in the PE file
-* **shell** : Launch ipython shell to analyze the PE file
+```
+usage: pecli [-h] {dump,info,checksize,sig,shell,check,search,richpe,vt} ...
+
+positional arguments:
+  {dump,info,checksize,sig,shell,check,search,richpe,vt}
+                        Plugins
+    dump                Dump resource or section of the file
+    info                Extract info from the PE file
+    checksize           Check size of the PE file
+    sig                 Handle PE Signature
+    shell               Launch ipython shell to analyze the PE file
+    check               Check for stuff in the file
+    search              Search for a string in a PE file
+    richpe              Decode Rich PE Header
+    vt                  Check PE information in VirusTotal
+```
 
 Example :
 ```
-$ pe info explorer.exe
+$ pecli info explorer.exe
 Metadata
 ================================================================================
 MD5:           418045a93cd87a352098ab7dabe1b53e
@@ -69,7 +81,7 @@ Id           Name    Size      Lang           Sublang           Type           M
 ```
 
 ```
-$ pe check playlib.exe
+$ pecli check playlib.exe
 Running checks on playlib.exe:
 [+] Abnormal section names: .enigma1 .enigma2
 [+] Suspicious section's entropy: .enigma1 - 7.931
@@ -88,6 +100,7 @@ This tool is published under MIT License
 
 ## Similar tools
 
+* [Viper](https://viper.li/)
 * [PEScanner](https://github.com/Te-k/analyst-scripts/blob/master/pe/pescanner.py) published by Michael Ligh for the [Malware Analyst's Cookbook](https://www.wiley.com/en-us/Malware+Analyst%27s+Cookbook+and+DVD%3A+Tools+and+Techniques+for+Fighting+Malicious+Code-p-9780470613030) (python2 only)
-* [Manalyze](https://github.com/JusticeRage/Manalyze)
+* [Manalyze](https://github.com/JusticeRage/Manalyze) by Ivan Kwiatkowski
 * On Windows, [PeStudio](https://www.winitor.com/), [PEView](http://wjradburn.com/software/) and [Resource Hacker](http://www.angusj.com/resourcehacker/)

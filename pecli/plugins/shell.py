@@ -4,8 +4,8 @@ import json
 import hashlib
 import pefile
 import datetime
-from pe.plugins.base import Plugin
-from pe.lib.dotnet_guid import is_dot_net_assembly, get_guid
+from pecli.plugins.base import Plugin
+from pecli.lib.dotnet_guid import is_dot_net_assembly, get_guid
 from IPython import embed
 
 

@@ -2,7 +2,7 @@ import os
 import sys
 import argparse
 import pefile
-from pe.plugins.base import Plugin
+from pecli.plugins.base import Plugin
 
 def init_plugins():
     plugin_dir = os.path.dirname(os.path.realpath(__file__)) + '/plugins'

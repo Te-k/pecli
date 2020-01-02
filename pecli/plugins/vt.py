@@ -6,9 +6,9 @@ import pefile
 import configparser
 import json
 import ssdeep
-from pe.plugins.base import Plugin
-from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
-from pe.lib.utils import debug_filename, debug_guid
+from pecli.plugins.base import Plugin
+from pecli.lib.dotnet_guid import get_guid, is_dot_net_assembly
+from pecli.lib.utils import debug_filename, debug_guid
 from virus_total_apis import PublicApi, PrivateApi
 
 

@@ -4,8 +4,8 @@ import json
 import hashlib
 import pefile
 import datetime
-from pe.plugins.base import Plugin
-from pe.lib.display import display_sections
+from pecli.plugins.base import Plugin
+from pecli.lib.display import display_sections
 
 class PluginSize(Plugin):
     name = "checksize"

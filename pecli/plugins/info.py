@@ -6,11 +6,11 @@ import pefile
 import datetime
 import magic
 import copy
-from pe.plugins.base import Plugin
-from pe.lib.display import display_sections
-from pe.lib.dotnet_guid import get_guid, is_dot_net_assembly
-from pe.lib.utils import debug_filename, debug_guid
-from pe.lib.richpe import get_richpe_hash
+from pecli.plugins.base import Plugin
+from pecli.lib.display import display_sections
+from pecli.lib.dotnet_guid import get_guid, is_dot_net_assembly
+from pecli.lib.utils import debug_filename, debug_guid
+from pecli.lib.richpe import get_richpe_hash
 
 
 class PluginInfo(Plugin):

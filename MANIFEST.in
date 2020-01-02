@@ -1,4 +1,4 @@
 include LICENSE
 include README.md
-recursive-include pe *.py
-recursive-include pe/data *.yara
+recursive-include pecli *.py
+recursive-include pecli/data *.yara
