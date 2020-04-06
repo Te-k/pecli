@@ -239,7 +239,7 @@ class PluginCheck(Plugin):
             offset = r.data.struct.OffsetToData
             size = r.data.struct.Size
             data = pe.get_memory_mapped_image()[offset:offset+size]
-            if data.startswith(b'\x4d\x5a\x90\x00\x03\x00\x00\x00'):
+            if data.startswith(b'\x4d\x5a\x90\x00\x03\x00'):
                 if r.name:
                     name = '/'.join(parents) + '/' + str(r.name)
                 else:

@@ -95,7 +95,11 @@ class PluginInfo(Plugin):
     def display_debug(self, pe):
         """Display debug infos"""
         debug_fn = debug_filename(pe)
-        debug_g = debug_guid(pe)
+        try:
+            debug_g = debug_guid(pe)
+        except TypeError:
+            print("Error in computing Debug GUID")
+            debug_g = None
         if debug_fn:
             print("Debug Filename:\t{}".format(debug_fn))
         if debug_g:
