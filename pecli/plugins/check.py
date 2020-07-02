@@ -217,7 +217,7 @@ class PluginCheck(Plugin):
 
     def check_peid(self, data):
         """Check on PEid signatures"""
-        peid_db = os.path.dirname(os.path.realpath(__file__))[:-7] + "data/PeID.yara"
+        peid_db = os.path.dirname(os.path.realpath(__file__))[:-7] + "data/PeID.yar"
         rules = yara.compile(filepath=peid_db)
         matches = rules.match(data=data)
         if len(matches) > 0:

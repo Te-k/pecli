@@ -34,6 +34,7 @@ positional arguments:
     sig                 Handle PE Signature
     shell               Launch ipython shell to analyze the PE file
     check               Check for stuff in the file
+    crypto              Identifies cryptographic values
     search              Search for a string in a PE file
     richpe              Decode Rich PE Header
     vt                  Check PE information in VirusTotal
