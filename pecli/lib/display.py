@@ -1,14 +1,34 @@
 import hashlib
 
+def display_ar(section):
+    """
+    Show access rights of a section
+    """
+    res = ""
+    if section.IMAGE_SCN_MEM_READ:
+        res += "R"
+    else:
+        res += "-"
+    if section.IMAGE_SCN_MEM_WRITE:
+        res += "W"
+    else:
+        res += "-"
+    if section.IMAGE_SCN_MEM_EXECUTE:
+        res += "X"
+    else:
+        res += "-"
+    return res
+
 def display_sections(pe):
     """Display information about the PE sections"""
-    print("%-10s %-9s %-9s %-9s %-9s %-8s %s" % ( "Name", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
+    print("{:10}{:5}{:9}{:9}{:9}{:9}{:8}{}".format("Name", "RWX", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
     for section in pe.sections:
         name = section.Name.decode('utf-8', 'ignore').strip('\x00')
         m = hashlib.md5()
         m.update(section.get_data())
-        print("%-10s %-9s %-9s %-9s %-9s %-8.04f %s" % (
+        print("{:10}{:5}{:9}{:9}{:9}{:9}{:8}{}".format(
             name,
+            display_ar(section),
             hex(section.Misc_VirtualSize),
             hex(section.VirtualAddress),
             hex(section.PointerToRawData),
