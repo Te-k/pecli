@@ -7,6 +7,8 @@ Tool to analyze PE files in python 3. Current features :
 * Check size
 * Search for a string in the file
 
+[![PyPI](https://img.shields.io/pypi/v/pecli)](https://pypi.org/project/pecli/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/pecli)](https://pypistats.org/packages/pecli) [![PyPI - License](https://img.shields.io/pypi/l/pecli)](LICENSE) [![GitHub issues](https://img.shields.io/github/issues/te-k/pecli)](https://github.com/Te-k/pecli/issues)
+
 ## Installation
 
 You can install it from [pypi](https://pypi.org/project/pecli/) : `pip install pecli`
@@ -23,20 +25,21 @@ pip install .
 PEcli works with plugins, like `pecli PLUGIN FILE`
 
 ```
-usage: pecli [-h] {dump,info,checksize,sig,shell,check,search,richpe,vt} ...
+usage: pecli [-h] {check,checksize,crypto,dump,info,richpe,search,shell,sig,strings,vt} ...
 
 positional arguments:
-  {dump,info,checksize,sig,shell,check,search,richpe,vt}
+  {check,checksize,crypto,dump,info,richpe,search,shell,sig,strings,vt}
                         Plugins
+    check               Check for stuff in the file
+    checksize           Check size of the PE file
+    crypto              Identifies cryptographic values
     dump                Dump resource or section of the file
     info                Extract info from the PE file
-    checksize           Check size of the PE file
-    sig                 Handle PE Signature
-    shell               Launch ipython shell to analyze the PE file
-    check               Check for stuff in the file
-    crypto              Identifies cryptographic values
-    search              Search for a string in a PE file
     richpe              Decode Rich PE Header
+    search              Search for a string in a PE file
+    shell               Launch ipython shell to analyze the PE file
+    sig                 Handle PE Signature
+    strings             Extract strings from the PE file
     vt                  Check PE information in VirusTotal
 ```
 

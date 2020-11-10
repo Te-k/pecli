@@ -23,7 +23,7 @@ def main():
 
     # Init plugins
     plugins = init_plugins()
-    for p in plugins:
+    for p in sorted(plugins.keys()):
         sp = subparsers.add_parser(
             plugins[p].name,
             help=plugins[p].description
