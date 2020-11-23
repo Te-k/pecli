@@ -21,12 +21,12 @@ def display_ar(section):
 
 def display_sections(pe):
     """Display information about the PE sections"""
-    print("{:10}{:5}{:9}{:9}{:9}{:9}{:8}{}".format("Name", "RWX", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
+    print("{:9} {:4} {:10} {:10} {:9} {:9} {:8} {}".format("Name", "RWX", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
     for section in pe.sections:
         name = section.Name.decode('utf-8', 'ignore').strip('\x00')
         m = hashlib.md5()
         m.update(section.get_data())
-        print("{:10}{:5}{:9}{:9}{:9}{:9}{:8}{}".format(
+        print("{:9} {:4} {:10} {:10} {:9} {:9} {:6.2f} {}".format(
             name,
             display_ar(section),
             hex(section.Misc_VirtualSize),
