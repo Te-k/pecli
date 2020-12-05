@@ -45,6 +45,6 @@ class PluginCrypto(Plugin):
                         hex(vaddr)
                     ))
                 else:
-                    print("Found : {} at {} (Virtual Address and section not found)".format(match.rile, hex(paddr)))
+                    print("Found : {} at {} (Virtual Address and section not found)".format(match.rule, hex(paddr)))
         else:
             print("No cryptographic data found!")
