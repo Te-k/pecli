@@ -14,7 +14,7 @@ setup(
     author_email='tek@randhome.io',
     keywords='malware',
     include_package_data=True,
-    install_requires=['pefile', 'yara-python', 'python-magic', 'ipython', 'virustotal-api==1.1.11', 'ssdeep==3.4'],
+    install_requires=['pefile', 'yara-python', 'python-magic', 'ipython', 'virustotal-api==1.1.11'],
     license='MIT',
     python_requires='>=3.5',
     packages=['pecli', 'pecli.plugins', 'pecli.lib', 'pecli.data'],

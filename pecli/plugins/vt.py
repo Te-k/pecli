@@ -5,7 +5,6 @@ import hashlib
 import pefile
 import configparser
 import json
-import ssdeep
 from pecli.plugins.base import Plugin
 from pecli.lib.dotnet_guid import get_guid, is_dot_net_assembly
 from pecli.lib.utils import debug_filename, debug_guid
@@ -115,10 +114,9 @@ class PluginVirusTotal(Plugin):
                     # Check if this PE file is in VT first
                     response = vt.get_file_report(sha256)
                     if response["results"]["response_code"] == 0:
-                        print("File not in VT, computing imphash, ssdeep only")
+                        print("File not in VT, computing imphash only")
                         pe = pefile.PE(data=data)
                         imphash = pe.get_imphash()
-                        ssd = ssdeep.hash(data)
                         vhash = None
                         authentihash = None
                         dbg_filename = debug_filename(pe)
@@ -133,7 +131,6 @@ class PluginVirusTotal(Plugin):
                     else:
                         print("File identified in VT: {}".format(response['results']['permalink']))
                         vhash = response['results']['vhash']
-                        ssd = response['results']['ssdeep']
                         authentihash = response['results']['authentihash']
                         imphash = response['results']['additional_info']["pe-imphash"]
                         dbg_guid = None
@@ -156,9 +153,6 @@ class PluginVirusTotal(Plugin):
                     print("# Searching for imphash: {}".format(imphash))
                     res = vt.file_search('imphash:"{}"'.format(imphash))
                     self.print_results(res, sha256)
-                    # ssdeep
-                    print("# Searching for ssdeep: {}".format(ssd))
-                    res = vt.file_search('ssdeep:"{}"'.format(ssd))
                     self.print_results(res, sha256)
                     # authentihash
                     if authentihash:

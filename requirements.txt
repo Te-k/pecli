@@ -1,6 +1,1 @@
-pefile
-yara-python
-python-magic
-ipython
-virustotal-api==1.1.11
-ssdeep==3.4
+.
