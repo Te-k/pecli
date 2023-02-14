@@ -5,6 +5,7 @@ def hex_reverse(integer, size):
     string = '{0:0{1}x}'.format(integer, size)
     return ''.join([string[i-2:i] for i in range(len(string), 0, -2)])
 
+
 def debug_filename(pe):
     """
     Extract filename from a PE file
@@ -14,6 +15,7 @@ def debug_filename(pe):
             if hasattr(i.entry, 'PdbFileName'):
                 return i.entry.PdbFileName.decode('utf-8', 'ignore')
     return None
+
 
 def debug_guid(pe):
     """

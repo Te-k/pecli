@@ -1,9 +1,10 @@
 #! /usr/bin/env python
-import pefile
-import datetime
-import yara
-import os
 import copy
+import datetime
+import os
+
+import yara
+
 from pecli.plugins.base import Plugin
 
 
@@ -14,50 +15,50 @@ class PluginCheck(Plugin):
     # https://github.com/katjahahn/PortEx/blob/master/src/main/java/com/github/katjahahn/tools/anomalies/SectionTableScanning.scala
     # http://www.hexacorn.com/blog/2016/12/15/pe-section-names-re-visited/
     know_suspicious_sections = {
-	".arch":  "Alpha-architecture section",
-	".bindat": "Binary data, e.g., by downware installers",
-	".cormeta": "CLR Metadata section",
-	".complua": "LUA compiler",
-	".fasm": "Flat Assembler",
+        ".arch":  "Alpha-architecture section",
+        ".bindat": "Binary data, e.g., by downware installers",
+        ".cormeta": "CLR Metadata section",
+        ".complua": "LUA compiler",
+        ".fasm": "Flat Assembler",
         ".flat" : "Flat Assembler",
-	".idlsym": "IDL Attributes (registered SEH)",
-	".impdata": "Alternative import section",
-	".orpc": "Code section inside rpcrt4.dll",
-	".rodata": "Read-only data section",
-	".script": "Section containing script",
-	".stab" : "GHC (Haskell)",
+        ".idlsym": "IDL Attributes (registered SEH)",
+        ".impdata": "Alternative import section",
+        ".orpc": "Code section inside rpcrt4.dll",
+        ".rodata": "Read-only data section",
+        ".script": "Section containing script",
+        ".stab" : "GHC (Haskell)",
         ".stabstr" : "GHC (Haskell)",
-	".sxdata" : "Registered Exception Handlers section",
-	".xdata" : "Exception information section",
-	"DGROUP" : "Legacy data group section",
-	"BSS" : "Uninitialized Data section (Borland)",
-	"CODE" : "Code section (Borland)",
-	"DATA" : "Data section (Borland)",
-	"INIT" : "INIT section of drivers",
+        ".sxdata" : "Registered Exception Handlers section",
+        ".xdata" : "Exception information section",
+        "DGROUP" : "Legacy data group section",
+        "BSS" : "Uninitialized Data section (Borland)",
+        "CODE" : "Code section (Borland)",
+        "DATA" : "Data section (Borland)",
+        "INIT" : "INIT section of drivers",
         "PAGE" : "PAGE section of drivers",
-	".aspack" : "Aspack packer",
+        ".aspack" : "Aspack packer",
         ".adata" : "Aspack/Armadillo packer",
-	"ASPack" : "Aspack packer",
+        "ASPack" : "Aspack packer",
         ".ASPack" : "Aspack packer",
-	".asspck" : "Aspack packer",
+        ".asspck" : "Aspack packer",
         ".boom": "The Boomerang List Builder",
-	".ccg" : "CCG Packer (Chinese)",
-	"BitArts" : "Crunch 2.0 Packer",
-	"DAStub" : "DAStub Dragon Armor protector",
-	".charmve" : "Added by the PIN tool",
+        ".ccg" : "CCG Packer (Chinese)",
+        "BitArts" : "Crunch 2.0 Packer",
+        "DAStub" : "DAStub Dragon Armor protector",
+        ".charmve" : "Added by the PIN tool",
         ".ecode": "Developed with  Easy Programming Language (EPL)",
         ".edata": "Developed with  Easy Programming Language (EPL)",
-	".enigma1" : "Enigma Virtual Box protector",
-	".enigma2" : "Enigma Virtual Box protector",
-	"!EPack" : "EPack packer",
+        ".enigma1" : "Enigma Virtual Box protector",
+        ".enigma2" : "Enigma Virtual Box protector",
+        "!EPack" : "EPack packer",
         ".gentee": "Gentee installer",
         ".kkrunchy": "kkrunchy Packer",
         "lz32.dll": "Crinkler",
-	".mackt" : "ImpRec-created section, this file was patched/cracked",
-	".MaskPE" : "MaskPE Packer",
-	"MEW" : "MEW packer",
-	".MPRESS1" : "MPRESS Packer",
-	".MPRESS2" : "MPRESS Packer",
+        ".mackt" : "ImpRec-created section, this file was patched/cracked",
+        ".MaskPE" : "MaskPE Packer",
+        "MEW" : "MEW packer",
+        ".MPRESS1" : "MPRESS Packer",
+        ".MPRESS2" : "MPRESS Packer",
         ".neolite" : "Neolite Packer",
         ".neolit" : "Neolite Packer",
         ".ndata" : "Nullsoft Installer",
@@ -67,7 +68,7 @@ class PluginCheck(Plugin):
         "nsp0" : "NsPack packer",
         "nsp0" : "NsPack packer",
         "nsp0" : "NsPack packer",
-        ".packed" : "RLPack Packer", #  first section only
+        ".packed" : "RLPack Packer",  # first section only
         "pebundle" : "PEBundle Packer",
         "PEBundle" : "PEBundle Packer",
         "PEC2TO" : "PECompact packer",
@@ -83,7 +84,7 @@ class PluginCheck(Plugin):
         ".petite" : "Petite Packer",
         ".pinclie" : "Added by the PIN tool",
         "ProCrypt" : "ProCrypt Packer",
-        ".RLPack" : "RLPack Packer", # second section
+        ".RLPack" : "RLPack Packer",  # second section
         ".rmnet" : "Ramnit virus marker",
         "RCryptor" : "RPCrypt Packer",
         ".RPCrypt" : "RPCrypt Packer",
@@ -98,10 +99,16 @@ class PluginCheck(Plugin):
         "PEPACK!!" : "Pepack",
         ".Upack" : "Upack packer",
         ".ByDwing" : "Upack packer",
-        "UPX0" : "UPX packer", "UPX1" : "UPX packer", "UPX2" : "UPX packer",
-        "UPX!" : "UPX packer", ".UPX0" : "UPX packer", ".UPX1" : "UPX packer",
+        "UPX0" : "UPX packer",
+        "UPX1" : "UPX packer",
+        "UPX2" : "UPX packer",
+        "UPX!" : "UPX packer",
+        ".UPX0" : "UPX packer",
+        ".UPX1" : "UPX packer",
         ".UPX2" : "UPX packer",
-        ".vmp0" : "VMProtect packer",".vmp1" : "VMProtect packer",".vmp2" : "VMProtect packer",
+        ".vmp0" : "VMProtect packer",
+        ".vmp1" : "VMProtect packer",
+        ".vmp2" : "VMProtect packer",
         "VProtect" : "Vprotect Packer",
         "WinLicen" : "WinLicense (Themida) Protector",
         ".WWPACK" : "WWPACK Packer",
@@ -125,7 +132,8 @@ class PluginCheck(Plugin):
         return n in self.normal_sections
 
     def check_abnormal_section_name(self, pe):
-        res = [x.Name.decode('utf-8', 'ignore').strip('\x00') for x in pe.sections if not self.normal_section_name(x.Name)]
+        res = [x.Name.decode('utf-8', 'ignore').strip('\x00')
+               for x in pe.sections if not self.normal_section_name(x.Name)]
         if len(res) > 0:
             print("[+] Abnormal section names: %s" % " ".join(res))
             return True
@@ -146,12 +154,12 @@ class PluginCheck(Plugin):
     def check_section_entropy(self, pe):
         res = []
         for s in pe.sections:
-            if s.get_entropy() < 1  or s.get_entropy() > 7:
+            if s.get_entropy() < 1 or s.get_entropy() > 7:
                 res.append([s.Name.decode('utf-8', 'ignore').strip('\x00'), s.get_entropy()])
 
         if len(res) > 0:
             if len(res) == 1:
-                print("[+] Suspicious section's entropy: %s - %.3f" % ( res[0][0], res[0][1]))
+                print("[+] Suspicious section's entropy: %s - %.3f" % (res[0][0], res[0][1]))
             else:
                 print("[+] Suspicious entropy in the following sections:")
                 for r in res:
@@ -193,10 +201,10 @@ class PluginCheck(Plugin):
     def check_tls(self, pe):
         """Check if there is a TLS callback"""
         callbacks = []
-        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and \
-                    pe.DIRECTORY_ENTRY_TLS and \
-                    pe.DIRECTORY_ENTRY_TLS.struct and \
-                    pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
+        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and
+            pe.DIRECTORY_ENTRY_TLS and
+            pe.DIRECTORY_ENTRY_TLS.struct and
+                pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
             callback_array_rva = pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks - pe.OPTIONAL_HEADER.ImageBase
             idx = 0
             while True:

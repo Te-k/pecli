@@ -1,15 +1,18 @@
+import argparse
 import os
 import sys
-import argparse
+
 import pefile
+
 from pecli.plugins.base import Plugin
+
 
 def init_plugins():
     plugin_dir = os.path.dirname(os.path.realpath(__file__)) + '/plugins'
     plugin_files = [x[:-3] for x in os.listdir(plugin_dir) if x.endswith(".py")]
     sys.path.insert(0, plugin_dir)
     for plugin in plugin_files:
-        mod = __import__(plugin)
+        __import__(plugin)
 
     PLUGINS = {}
     for plugin in Plugin.__subclasses__():
@@ -49,6 +52,7 @@ def main():
             plugins[args.plugin].run(args)
     else:
         parser.print_help()
+
 
 if __name__ == "__main__":
     main()

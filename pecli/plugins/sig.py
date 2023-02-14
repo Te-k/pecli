@@ -1,9 +1,6 @@
 #! /usr/bin/env python
 import pefile
-import datetime
-import yara
-import os
-import copy
+
 from pecli.plugins.base import Plugin
 
 
@@ -26,8 +23,9 @@ class PluginSig(Plugin):
     def run(self, args):
         if hasattr(args, 'subcommand'):
             if args.subcommand == 'info':
-                pe =  pefile.PE(args.PEFILE)
-                address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
+                pe = pefile.PE(args.PEFILE)
+                address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[
+                        pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
                 if address == 0:
                     print("This PE file is not signed")
                 else:
@@ -38,10 +36,12 @@ class PluginSig(Plugin):
                     output = args.output
                 else:
                     output = args.PEFILE + '.sig'
-                pe =  pefile.PE(args.PEFILE)
+                pe = pefile.PE(args.PEFILE)
 
-                address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
-                size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].Size
+                address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[
+                        pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
+                # size = pe.OPTIONAL_HEADER.DATA_DIRECTORY[
+                #         pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].Size
                 if address == 0:
                     print('This PE file is not signed')
                 else:

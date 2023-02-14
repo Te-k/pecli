@@ -1,11 +1,7 @@
 #! /usr/bin/env python
-import sys
-import json
-import hashlib
-import pefile
-import datetime
-from pecli.plugins.base import Plugin
 from pecli.lib.display import display_sections
+from pecli.plugins.base import Plugin
+
 
 class PluginSize(Plugin):
     name = "checksize"

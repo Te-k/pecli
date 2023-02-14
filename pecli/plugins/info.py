@@ -1,16 +1,17 @@
 #! /usr/bin/env python
-import sys
-import json
-import hashlib
-import pefile
-import datetime
-import magic
 import copy
-from pecli.plugins.base import Plugin
+import datetime
+import hashlib
+import sys
+
+import magic
+import pefile
+
 from pecli.lib.display import display_sections
 from pecli.lib.dotnet_guid import get_guid, is_dot_net_assembly
-from pecli.lib.utils import debug_filename, debug_guid
 from pecli.lib.richpe import get_richpe_hash
+from pecli.lib.utils import debug_filename, debug_guid
+from pecli.plugins.base import Plugin
 
 
 class PluginInfo(Plugin):
@@ -22,28 +23,30 @@ class PluginInfo(Plugin):
         Check if the PE is signed
         Return True / False
         """
-        return (pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress != 0)
+        return (pe.OPTIONAL_HEADER.DATA_DIRECTORY[
+            pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress != 0)
 
     def search_section(self, pe, address, physical=True):
         """Search the section of the given address (return None if not found)"""
         if physical:
             for s in pe.sections:
                 if (address >= s.PointerToRawData) and (address <= s.PointerToRawData + s.SizeOfRawData):
-                    #vaddr = pe.OPTIONAL_HEADER.ImageBase + pos - s.PointerToRawData + s.VirtualAddress
+                    # vaddr = pe.OPTIONAL_HEADER.ImageBase + pos - s.PointerToRawData + s.VirtualAddress
                     return s.Name.decode('utf-8', 'ignore').strip('\x00')
         else:
             for s in pe.sections:
-                if (address >= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress)) and (address <= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress + s.Misc_VirtualSize)):
+                if (address >= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress)) \
+                        and (address <= (pe.OPTIONAL_HEADER.ImageBase + s.VirtualAddress + s.Misc_VirtualSize)):
                     return s.Name.decode('utf-8', 'ignore').strip('\x00')
 
         return None
 
     def check_tls(self, pe):
         callbacks = []
-        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and \
-                    pe.DIRECTORY_ENTRY_TLS and \
-                    pe.DIRECTORY_ENTRY_TLS.struct and \
-                    pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
+        if (hasattr(pe, 'DIRECTORY_ENTRY_TLS') and
+            pe.DIRECTORY_ENTRY_TLS and
+            pe.DIRECTORY_ENTRY_TLS.struct and
+                pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks):
             callback_array_rva = pe.DIRECTORY_ENTRY_TLS.struct.AddressOfCallBacks - pe.OPTIONAL_HEADER.ImageBase
             idx = 0
             while True:
@@ -66,7 +69,9 @@ class PluginInfo(Plugin):
         """Display header information"""
         if pe.FILE_HEADER.IMAGE_FILE_DLL:
             print("DLL File! ")
-        print("Compile Time:\t%s (UTC - 0x%-8X)"  %(str(datetime.datetime.utcfromtimestamp(pe.FILE_HEADER.TimeDateStamp)), pe.FILE_HEADER.TimeDateStamp))
+        print("Compile Time:\t%s (UTC - 0x%-8X)" % (
+            str(datetime.datetime.utcfromtimestamp(pe.FILE_HEADER.TimeDateStamp)),
+            pe.FILE_HEADER.TimeDateStamp))
 
     def display_imports(self, pe):
         """Display imports"""
@@ -78,7 +83,6 @@ class PluginInfo(Plugin):
                         print('\t%s %s' % (hex(imp.address), imp.name.decode('utf-8')))
                     else:
                         print('\t%s %s' % (hex(imp.address), str(imp.ordinal)))
-
 
     def display_exports(self, pe):
         """Display exports"""
@@ -137,10 +141,11 @@ class PluginInfo(Plugin):
     def display_resources(self, pe):
         """Display resources"""
         if hasattr(pe, 'DIRECTORY_ENTRY_RESOURCE'):
-            if(len(pe.DIRECTORY_ENTRY_RESOURCE.entries) > 0):
+            if (len(pe.DIRECTORY_ENTRY_RESOURCE.entries) > 0):
                 print("Resources:")
                 print("=" * 80)
-                print("%-12s %-7s %-9s %-14s %-17s %-14s %-9s" % ("Id", "Name", "Size", "Lang", "Sublang", "Type", "MD5"))
+                print("%-12s %-7s %-9s %-14s %-17s %-14s %-9s" % (
+                    "Id", "Name", "Size", "Lang", "Sublang", "Type", "MD5"))
                 for r in pe.DIRECTORY_ENTRY_RESOURCE.entries:
                     self.resource(pe, 0, r, [])
 
@@ -178,7 +183,8 @@ class PluginInfo(Plugin):
         self.display_headers(pe)
         entry_point = pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase
         section = self.search_section(pe, entry_point, physical=False)
-        print("Entry point:\t0x%x (section %s)" % (pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase, section))
+        print("Entry point:\t0x%x (section %s)" % (
+            pe.OPTIONAL_HEADER.AddressOfEntryPoint + pe.OPTIONAL_HEADER.ImageBase, section))
         res = self.check_tls(pe)
         if len(res) > 0:
             if len(res) == 1:
@@ -194,7 +200,7 @@ class PluginInfo(Plugin):
                 res = get_guid(pe, data)
                 print(".NET MVid\t{}".format(res["mvid"]))
                 print(".NET TypeLib\t{}".format(res['typelib_id']))
-            except:
+            except:  # noqa: E722
                 print("Impossible to parse .NET GUID")
 
         self.display_debug(pe)

@@ -1,9 +1,6 @@
 #! /usr/bin/env python
 import sys
-import json
-import hashlib
-import pefile
-import datetime
+
 from pecli.plugins.base import Plugin
 
 
@@ -56,7 +53,6 @@ class PluginDump(Plugin):
                     sys.exit(0)
             print("Section not found")
         elif args.resource:
-            level = 0
             search = args.resource.split("/")
             found = False
             if hasattr(pe, 'DIRECTORY_ENTRY_RESOURCE'):

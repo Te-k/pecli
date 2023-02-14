@@ -20,8 +20,8 @@ setup(
     packages=['pecli', 'pecli.plugins', 'pecli.lib', 'pecli.data'],
     package_dir={'pecli.lib': 'pecli/lib'},
     package_data={'pecli': ['pecli/data/*.yar']},
-    entry_points= {
-        'console_scripts': [ 'pecli=pecli.main:main' ]
+    entry_points={
+        'console_scripts': ['pecli=pecli.main:main']
     },
     classifiers=[
         "Programming Language :: Python :: 3",

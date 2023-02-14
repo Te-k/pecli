@@ -1,9 +1,8 @@
 #! /usr/bin/env python
-import pefile
-import datetime
-import yara
 import os
-import copy
+
+import yara
+
 from pecli.plugins.base import Plugin
 
 
@@ -23,7 +22,6 @@ class PluginCrypto(Plugin):
                 vaddr = pe.OPTIONAL_HEADER.ImageBase + addr - s.PointerToRawData + s.VirtualAddress
                 return (s.Name.decode('utf-8', 'ignore').strip('\x00'), vaddr)
         return (None, None)
-
 
     def run(self, args, pe, data):
         crypto_db = os.path.dirname(os.path.realpath(__file__))[:-7] + "data/yara-crypto.yar"

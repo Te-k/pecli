@@ -1,5 +1,6 @@
 import hashlib
 
+
 def display_ar(section):
     """
     Show access rights of a section
@@ -19,9 +20,11 @@ def display_ar(section):
         res += "-"
     return res
 
+
 def display_sections(pe):
     """Display information about the PE sections"""
-    print("{:9} {:4} {:10} {:10} {:9} {:9} {:8} {}".format("Name", "RWX", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
+    print("{:9} {:4} {:10} {:10} {:9} {:9} {:8} {}".format(
+        "Name", "RWX", "VirtSize", "VirtAddr", "RawAddr", "RawSize", "Entropy", "md5"))
     for section in pe.sections:
         name = section.Name.decode('utf-8', 'ignore').strip('\x00')
         m = hashlib.md5()

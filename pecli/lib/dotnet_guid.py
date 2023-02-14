@@ -1,6 +1,6 @@
+import datetime
 import re
 import struct
-import datetime
 
 """
 Script imported and adapted from
@@ -76,7 +76,7 @@ def get_guid(pe, file_data):
     else:
         offsets_to_test = [mdo - txt_start]
 
-    offsets_to_test.extend([l.start() for l in re.finditer(b"\x42\x53\x4a\x42", text_section)][::-1])
+    offsets_to_test.extend([line.start() for line in re.finditer(b"\x42\x53\x4a\x42", text_section)][::-1])
 
     for i_offset in offsets_to_test:
         i = text_section[i_offset:]
@@ -88,7 +88,7 @@ def get_guid(pe, file_data):
         clr_version_length = struct.unpack("<I", i[meta_data_offset + 12:meta_data_offset + 16])[0]
         try:
             stream_count = struct.unpack("<H", i[meta_data_offset + clr_version_length +
-                                18:meta_data_offset + clr_version_length + 20])[0]
+                                                 18:meta_data_offset + clr_version_length + 20])[0]
         except struct.error:
             continue
         current_offset = meta_data_offset + clr_version_length + 20
@@ -142,7 +142,7 @@ def get_guid(pe, file_data):
 
             has_custom_attribute_tables = [
                 0x06, 0x04, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x00,
-                0x0E, # Permission aka DeclSecurity (typo in the spec)
+                0x0E,  # Permission aka DeclSecurity (typo in the spec)
                 0x17, 0x14, 0x11, 0x1A, 0x1B, 0x20, 0x23, 0x26,
                 0x27, 0x2A, 0x2C, 0x2B
             ]
@@ -187,7 +187,8 @@ def get_guid(pe, file_data):
                 # 0x0b Constant = Type (?) + Parent + Value (Blob heap index)
                 4 + blob_heap_index_length,
                 # 0x0c CustomAttr = Parent + Type (CustomAttributeType) + Value (Blob heap index)
-                (4 if big_has_custom_attribute else 2) + (4 if big_custom_attribute_type else 2) + blob_heap_index_length,
+                (4 if big_has_custom_attribute else 2) +
+                (4 if big_custom_attribute_type else 2) + blob_heap_index_length,
                 # Don't care about the rest
             ]
 

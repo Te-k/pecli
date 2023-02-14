@@ -1,14 +1,16 @@
 #! /usr/bin/env python
-import sys
-import os
-import hashlib
-import pefile
 import configparser
+import hashlib
 import json
-from pecli.plugins.base import Plugin
+import os
+import sys
+
+import pefile
+from virus_total_apis import PrivateApi, PublicApi
+
 from pecli.lib.dotnet_guid import get_guid, is_dot_net_assembly
 from pecli.lib.utils import debug_filename, debug_guid
-from virus_total_apis import PublicApi, PrivateApi
+from pecli.plugins.base import Plugin
 
 
 class PluginVirusTotal(Plugin):
@@ -63,7 +65,7 @@ class PluginVirusTotal(Plugin):
     def run(self, args):
         config_path = os.path.join(os.path.expanduser("~"), ".vtapi")
         if hasattr(args, 'subcommand'):
-            if args.subcommand in('check', 'similar'):
+            if args.subcommand in ('check', 'similar'):
                 if not os.path.isfile(config_path):
                     print("Invalid configuration file, please use pe vt config to configure your VT account")
                     sys.exit(1)
@@ -140,7 +142,7 @@ class PluginVirusTotal(Plugin):
                                 if "guid" in response['results']['additional_info']["pe-debug"][0]["codeview"]:
                                     dbg_guid = response['results']['additional_info']["pe-debug"][0]["codeview"]["guid"]
                                 if "name" in response['results']['additional_info']["pe-debug"][0]["codeview"]:
-                                    dbg_filename = response['results']['additional_info']['pe-debug'][0]['codeview']['name']
+                                    dbg_filename = response['results']['additional_info']['pe-debug'][0]['codeview']['name']  # noqa: E501
 
                         if "netguids" in response['results']['additional_info']:
                             dotnet_mvid = response['results']['additional_info']['netguids']['mvid']

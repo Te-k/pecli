@@ -1,6 +1,4 @@
-import sys
 import hashlib
-import argparse
 import struct
 
 # From https://github.com/RichHeaderResearch/RichPE/blob/master/spoof_check.py
@@ -260,7 +258,7 @@ def get_richpe_info(pe):
     https://www.ntcore.com/files/richsign.htm
     """
     entries = []
-    for i in range(int(len(pe.RICH_HEADER.clear_data[16:] ) / 8)):
+    for i in range(int(len(pe.RICH_HEADER.clear_data[16:]) / 8)):
         version, prodid = struct.unpack('<HH', pe.RICH_HEADER.clear_data[16+i*8:16+i*8+4])
         count = struct.unpack('<I', pe.RICH_HEADER.clear_data[16+i*8+4:16+i*8+8])[0]
         if prodid in KNOWN_PRODUCT_IDS:

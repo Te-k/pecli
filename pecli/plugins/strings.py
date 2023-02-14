@@ -1,12 +1,10 @@
 #! /usr/bin/env python
-import pefile
-import datetime
-import os
 import re
+
 from pecli.plugins.base import Plugin
 
-ASCII_BYTE = b" !\"#\$%&\'\(\)\*\+,-\./0123456789:;<=>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]\^_`abcdefghijklmnopqrstuvwxyz\{\|\}\\\~\t"
 
+ASCII_BYTE = rb" !\"#\$%&\'\(\)\*\+,-\./0123456789:;<=>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]\^_`abcdefghijklmnopqrstuvwxyz\{\|\}\\\~\t"  # noqa: E501
 
 
 class PluginStrings(Plugin):
@@ -18,16 +16,16 @@ class PluginStrings(Plugin):
         parser.add_argument('--ascii', '-a', action="store_true", help="ASCII strings only")
         parser.add_argument('--wide', '-w', action="store_true", help="Wide strings only")
         parser.add_argument('-n', '--min-len', type=int, default=4,
-                        help='Print sequences of characters that are at least ' +
-                             'min-len characters long, instead of the default 4.')
+                            help='Print sequences of characters that are at least ' +
+                            'min-len characters long, instead of the default 4.')
         parser.add_argument('PEFILE', help='a PE file')
         self.parser = parser
 
     def run(self, args):
         # regular expressions from flare-floss:
         #  https://github.com/fireeye/flare-floss/blob/master/floss/strings.py#L7-L9
-        re_narrow = re.compile(b'([%s]{%d,})' % (ASCII_BYTE, args.min_len))
-        re_wide = re.compile(b'((?:[%s]\x00){%d,})' % (ASCII_BYTE, args.min_len))
+        re_narrow = re.compile(rb"([%s]{%d,})" % (ASCII_BYTE, args.min_len))
+        re_wide = re.compile(rb"((?:[%s]\x00){%d,})" % (ASCII_BYTE, args.min_len))
 
         with open(args.PEFILE, 'rb') as f:
             data = f.read()

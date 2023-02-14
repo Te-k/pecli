@@ -1,10 +1,6 @@
 #! /usr/bin/env python
-import sys
-import json
-import hashlib
-import pefile
-from pecli.plugins.base import Plugin
 from pecli.lib.richpe import get_richpe_hash, get_richpe_info
+from pecli.plugins.base import Plugin
 
 
 class PluginRichPE(Plugin):
@@ -31,7 +27,8 @@ class PluginRichPE(Plugin):
                     print("{}\t{}\t{}\t{}".format(
                             i['prodid'],
                             i['version'],
-                            i['count']
+                            i['count'],
+                            ""
                         )
                     )
             print("")
