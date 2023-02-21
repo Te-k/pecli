@@ -3,7 +3,6 @@ import re
 
 from pecli.plugins.base import Plugin
 
-
 ASCII_BYTE = rb" !\"#\$%&\'\(\)\*\+,-\./0123456789:;<=>\?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\[\]\^_`abcdefghijklmnopqrstuvwxyz\{\|\}\\\~\t"  # noqa: E501
 
 
