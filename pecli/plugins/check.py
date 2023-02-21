@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 import copy
 import datetime
-import pkg_resources
 
+import pkg_resources
 import yara
 
 from pecli.plugins.base import Plugin

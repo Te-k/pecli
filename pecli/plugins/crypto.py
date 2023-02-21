@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 import os
 
-import yara
 import pkg_resources
+import yara
 
 from pecli.plugins.base import Plugin
 
