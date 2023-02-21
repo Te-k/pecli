@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 import copy
 import datetime
-import os
 import pkg_resources
 
 import yara
@@ -67,8 +66,6 @@ class PluginCheck(Plugin):
         ".nsp1" : "NsPack packer",
         ".nsp2" : "NsPack packer",
         "nsp0" : "NsPack packer",
-        "nsp0" : "NsPack packer",
-        "nsp0" : "NsPack packer",
         ".packed" : "RLPack Packer",  # first section only
         "pebundle" : "PEBundle Packer",
         "PEBundle" : "PEBundle Packer",
@@ -77,7 +74,6 @@ class PluginCheck(Plugin):
         "pec1" : "PECompact packer",
         "pec2" : "PECompact packer",
         "PEC2MO" : "PECompact packer",
-        "PEC2TO" : "PECompact packer",
         "PECompact2" : "PECompact packer",
         "PELOCKnt" : "PELock Protector",
         ".perplex" : "Perplex PE-Protector",

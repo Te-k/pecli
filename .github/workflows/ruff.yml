@@ -1,0 +1,23 @@
+name: Ruff
+
+on:
+  push:
+    paths:
+      - '*.py'
+
+jobs:
+  ruff_py3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+          architecture: x64
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install ruff
+        run: pip install ruff
+      - name: run ruff
+        run: |
+          ruff check .

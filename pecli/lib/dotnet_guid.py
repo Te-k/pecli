@@ -93,7 +93,7 @@ def get_guid(pe, file_data):
             continue
         current_offset = meta_data_offset + clr_version_length + 20
         heaps = {}
-        for c in range(stream_count):
+        for _ in range(stream_count):
             offset = struct.unpack("<I", i[current_offset:current_offset + 4])[0]
             size = struct.unpack("<I", i[current_offset + 4:current_offset + 8])[0]
             current_offset += 8
@@ -195,7 +195,7 @@ def get_guid(pe, file_data):
             for index in range(0x0c):
                 t_offset += row_type_widths[index] * row_counts[index]
 
-            for index in range(row_counts[0x0c]):
+            for _ in range(row_counts[0x0c]):
                 # In the most strict interpretation, a typelib id is expressed as a
                 # GuidAttribute on the current assembly.
                 # To check that it's actually a GuidAttribute we'd have to support parsing
