@@ -2,6 +2,7 @@
 import copy
 import datetime
 import os
+import pkg_resources
 
 import yara
 
@@ -225,7 +226,7 @@ class PluginCheck(Plugin):
 
     def check_peid(self, data):
         """Check on PEid signatures"""
-        peid_db = os.path.dirname(os.path.realpath(__file__))[:-7] + "data/PeID.yar"
+        peid_db = pkg_resources.resource_filename("pecli", 'data/PeID.yar')
         rules = yara.compile(filepath=peid_db)
         matches = rules.match(data=data)
         if len(matches) > 0:
