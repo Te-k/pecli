@@ -34,7 +34,7 @@ class PluginCrypto(Plugin):
         matches = rules.match(data=data)
         if len(matches) > 0:
             for match in matches:
-                paddr = match.strings[0][0]
+                paddr = match.strings[0].instances[0].offset
                 section, vaddr = self.convert_physical_addr(pe, paddr)
                 if section:
                     print("Found : {} at {} ({} - {})".format(

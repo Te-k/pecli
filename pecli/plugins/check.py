@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import copy
 import datetime
+import os
 
 import pkg_resources
 import yara
@@ -120,6 +121,16 @@ class PluginCheck(Plugin):
         "PYTHONSCRIPT": "PY2EXE binary",
         "PYTHON27.DLL": "PY2EXE binary"
     }
+
+    def convert_physical_addr(self, pe, addr):
+        """
+        Convert a physical address into its logical address
+        """
+        for s in pe.sections:
+            if (addr >= s.PointerToRawData) and (addr <= s.PointerToRawData + s.SizeOfRawData):
+                vaddr = pe.OPTIONAL_HEADER.ImageBase + addr - s.PointerToRawData + s.VirtualAddress
+                return (s.Name.decode('utf-8', 'ignore').strip('\x00'), vaddr)
+        return (None, None)
 
     def normal_section_name(self, section_name):
         if isinstance(section_name, bytes):
@@ -272,7 +283,7 @@ class PluginCheck(Plugin):
                 suspicious |= self.resource(pe, r2, parents)
             return suspicious
 
-    def check_pe_resource(self, pe):
+    def check_pe_resource(self, pe) -> bool:
         """
         Check if any resource starts with a PE header
         """
@@ -281,6 +292,29 @@ class PluginCheck(Plugin):
             for r in pe.DIRECTORY_ENTRY_RESOURCE.entries:
                 suspicious |= self.resource(pe, r, [])
         return suspicious
+
+    def check_yara(self, pe, data: bytes) -> None:
+        yara_rules = pkg_resources.resource_filename("pecli", "data/other.yar")
+        if not os.path.isfile(yara_rules):
+            print("Problem accessing the yara database")
+            return
+
+        rules = yara.compile(filepath=yara_rules)
+        matches = rules.match(data=data)
+        if len(matches) > 0:
+            print("[+] Yara matches:")
+            for match in matches:
+                paddr = match.strings[0].instances[0].offset
+                section, vaddr = self.convert_physical_addr(pe, paddr)
+                if section:
+                    print("\t- {} at {} ({} - {})".format(
+                        match.rule,
+                        hex(paddr),
+                        section,
+                        hex(vaddr)
+                    ))
+                else:
+                    print("\t- {} at {}".format(match.rule, hex(paddr)))
 
     def run(self, args, pe, data):
         print("Running checks on %s:" % args.PEFILE)
@@ -294,5 +328,6 @@ class PluginCheck(Plugin):
         suspicious |= self.check_peid(data)
         suspicious |= self.check_imphash(pe)
         suspicious |= self.check_pe_resource(pe)
+        self.check_yara(pe, data)
         if not suspicious:
             print("Nothing suspicious found")

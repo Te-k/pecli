@@ -1,8 +1,8 @@
 # Enable flake8-bugbear (`B`) rules.
-select = ["E", "F", "B"]
+lint.select = ["E", "F", "B"]
 
 # Never enforce `E501` (line length violations).
-ignore = ["E501"]
+lint.ignore = ["E501"]
 
 # Avoid trying to fix flake8-bugbear (`B`) violations.
-unfixable = ["B"]
+lint.unfixable = ["B"]

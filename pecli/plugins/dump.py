@@ -10,7 +10,7 @@ class PluginDump(Plugin):
 
     def add_arguments(self, parser):
         parser.add_argument('--section', '-s', help='Dump the section with the given name')
-        parser.add_argument('--resource', '-r', help='Dump the given resource (live 12/10/133)')
+        parser.add_argument('--resource', '-r', help='Dump the given resource (like 12/10/133)')
         parser.add_argument('--output', '-o', help='Name of the output file')
         parser.add_argument('--debug', '-d', action='store_true', help='Show debug info')
         # TODO: feature to dump everything
