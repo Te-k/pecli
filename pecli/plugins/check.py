@@ -3,9 +3,9 @@ import copy
 import datetime
 import os
 
-import pkg_resources
 import yara
 
+from pecli.paths import data_path
 from pecli.plugins.base import Plugin
 
 
@@ -233,7 +233,7 @@ class PluginCheck(Plugin):
 
     def check_peid(self, data):
         """Check on PEid signatures"""
-        peid_db = pkg_resources.resource_filename("pecli", 'data/PeID.yar')
+        peid_db = data_path("PeID.yar")
         rules = yara.compile(filepath=peid_db)
         matches = rules.match(data=data)
         if len(matches) > 0:
@@ -294,7 +294,7 @@ class PluginCheck(Plugin):
         return suspicious
 
     def check_yara(self, pe, data: bytes) -> None:
-        yara_rules = pkg_resources.resource_filename("pecli", "data/other.yar")
+        yara_rules = data_path("other.yar")
         if not os.path.isfile(yara_rules):
             print("Problem accessing the yara database")
             return
