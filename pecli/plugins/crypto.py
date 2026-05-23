@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 import os
 
-import pkg_resources
 import yara
 
+from pecli.paths import data_path
 from pecli.plugins.base import Plugin
 
 
@@ -25,7 +25,7 @@ class PluginCrypto(Plugin):
         return (None, None)
 
     def run(self, args, pe, data):
-        crypto_db = pkg_resources.resource_filename("pecli", "data/yara-crypto.yar")
+        crypto_db = data_path("yara-crypto.yar")
         if not os.path.isfile(crypto_db):
             print("Problem accessing the yara database")
             return
